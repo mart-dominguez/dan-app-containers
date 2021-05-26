@@ -1,0 +1,31 @@
+version: "3.9"  # optional since v1.27.0 # con docker host.docker.internal
+services: 
+  productos:
+    container_name: dan-productos
+    image: dan/ms-productos:0.0.1-SNAPSHOT
+    ports:
+      - "9010:8080"
+    environment:
+      - "SPRING_PROFILES_ACTIVE=docker"
+      - "SERVER_PORT=8080"
+      - "SPRING_DATASOURCE_URL=jdbc:postgresql://pgdb:5432/dan2021"
+      - "SPRING_DATA_MONGODB_URI=mongodb://dan2021:dan2021@mongo:27017/dan2021"
+    networks:
+      - app      
+  ctacte:
+      container_name: dan-cta-cte
+      image: dan/ms-ctacorriente:0.0.1-SNAPSHOT
+      ports:
+        - "9011:8080"
+      environment:
+        - "SPRING_PROFILES_ACTIVE=docker"
+        - "SERVER_PORT=8080"
+        - "SPRING_DATASOURCE_URL=jdbc:postgresql://pgdb:5432/dan2021"
+        - "SPRING_DATA_MONGODB_URI=mongodb://dan2021:dan2021@mongo:27017/dan2021"
+      networks:
+        - app         
+networks:
+  app:
+    external: true
+    name: dan-docker_app
+    
