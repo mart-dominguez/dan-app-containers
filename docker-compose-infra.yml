@@ -1,0 +1,62 @@
+version: "3.9"  # optional since v1.27.0 # con docker host.docker.internal
+services: 
+  pgdb:
+    image: postgres
+    restart: always
+    environment:
+        POSTGRES_PASSWORD: dan2021
+        POSTGRES_USER: dan2021
+        POSTGRES_DB: dan2021
+    volumes:
+        - ./pg-data:/var/lib/postgresql/data
+        - ./ESQUEMA_DAN_01.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+        - infra
+        - app        
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 6001:8080
+    networks:
+        - infra
+  mongo:
+    image: mongo
+    restart: always
+    volumes:
+      - ./mg-data/datadb:/data/db
+      - ./mg-data/configdb:/data/configdb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: dan2021
+      MONGO_INITDB_ROOT_PASSWORD: dan2021
+    networks:
+      - infra
+      - app        
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 6002:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: dan2021
+      ME_CONFIG_MONGODB_ADMINPASSWORD: dan2021
+    networks:
+      - infra
+  artemis:
+    image: dan-artemis
+    restart: always
+    ports:
+      - "61616:61616" 
+      - "8161:8161"
+      - "5445:5445"
+      - "5672:5672"
+      - "1883:1883" 
+      - "61613:61613"
+    networks:
+      - infra
+      - app      
+networks:
+    infra:
+        driver: bridge
+    app:
+        driver: bridge    
